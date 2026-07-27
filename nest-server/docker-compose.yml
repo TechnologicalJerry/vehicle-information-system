@@ -1,0 +1,135 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: vis-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      GLOBAL_PREFIX: api
+      API_VERSION: v1
+      DATABASE_URL: postgresql://vis_user:vis_password@postgres:5432/vis_db?schema=public
+      MONGODB_URI: mongodb://mongodb:27017/vis_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      KAFKA_BROKERS: kafka:9092
+      MQTT_URL: mqtt://emqx:1883
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      emqx:
+        condition: service_started
+    networks:
+      - vis-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: vis-postgres
+    environment:
+      POSTGRES_USER: vis_user
+      POSTGRES_PASSWORD: vis_password
+      POSTGRES_DB: vis_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vis_user -d vis_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vis-network
+
+  mongodb:
+    image: mongo:7.0
+    container_name: vis-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vis-network
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: vis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vis-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: vis-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - vis-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: vis-kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    networks:
+      - vis-network
+
+  emqx:
+    image: emqx/emqx:5.4.0
+    container_name: vis-emqx
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"
+      - "18083:18083"
+    environment:
+      EMQX_NAME: vis_emqx
+      EMQX_HOST: 127.0.0.1
+    networks:
+      - vis-network
+
+networks:
+  vis-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:

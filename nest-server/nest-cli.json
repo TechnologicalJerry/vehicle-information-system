@@ -80,6 +80,42 @@
         "tsConfigPath": "apps/trip-service/tsconfig.app.json"
       }
     },
+    "diagnostics-service": {
+      "type": "application",
+      "root": "apps/diagnostics-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/diagnostics-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/diagnostics-service/tsconfig.app.json"
+      }
+    },
+    "driver-behaviour-service": {
+      "type": "application",
+      "root": "apps/driver-behaviour-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/driver-behaviour-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/driver-behaviour-service/tsconfig.app.json"
+      }
+    },
+    "remote-command-service": {
+      "type": "application",
+      "root": "apps/remote-command-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/remote-command-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/remote-command-service/tsconfig.app.json"
+      }
+    },
+    "ota-service": {
+      "type": "application",
+      "root": "apps/ota-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/ota-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ota-service/tsconfig.app.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",

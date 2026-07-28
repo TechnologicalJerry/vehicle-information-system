@@ -18,6 +18,10 @@ import { TelemetryModule } from '../../telemetry-service/src/telemetry/telemetry
 import { LocationsModule } from '../../location-service/src/locations/locations.module';
 import { GeofencesModule } from '../../location-service/src/geofences/geofences.module';
 import { TripsModule } from '../../trip-service/src/trips/trips.module';
+import { DiagnosticsModule } from '../../diagnostics-service/src/diagnostics/diagnostics.module';
+import { DriverBehaviourModule } from '../../driver-behaviour-service/src/driver-behaviour/driver-behaviour.module';
+import { RemoteCommandModule } from '../../remote-command-service/src/commands/remote-command.module';
+import { OtaModule } from '../../ota-service/src/ota/ota.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 @Module({
@@ -39,6 +43,10 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
     LocationsModule,
     GeofencesModule,
     TripsModule,
+    DiagnosticsModule,
+    DriverBehaviourModule,
+    RemoteCommandModule,
+    OtaModule,
   ],
   providers: [
     {

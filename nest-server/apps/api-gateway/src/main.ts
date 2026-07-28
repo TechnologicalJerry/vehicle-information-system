@@ -92,6 +92,22 @@ async function bootstrap() {
       'Trip Management & Analytics',
       'Automatic trip detection engine, trip history, route trajectory, and aggregate trip analytics',
     )
+    .addTag(
+      'Vehicle Diagnostics & Maintenance',
+      'Vehicle health scoring (0-100), DTC detection engine, and maintenance recommendations',
+    )
+    .addTag(
+      'Driver Behaviour Analytics & Safety Scoring',
+      'Driver safety score calculation (0-100), safety violation detection, and fleet rankings',
+    )
+    .addTag(
+      'Remote Vehicle Commands',
+      'Secure remote vehicle control, idempotent command priority queue & MQTT dispatch',
+    )
+    .addTag(
+      'OTA Updates & Firmware Management',
+      'Firmware SHA-256 validation, staged campaign fleet rollout & automatic rollback management',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

@@ -116,6 +116,51 @@
         "tsConfigPath": "apps/ota-service/tsconfig.app.json"
       }
     },
+    "notification-service": {
+      "type": "application",
+      "root": "apps/notification-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/notification-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notification-service/tsconfig.app.json"
+      }
+    },
+    "analytics-service": {
+      "type": "application",
+      "root": "apps/analytics-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/analytics-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/analytics-service/tsconfig.app.json"
+      }
+    },
+    "reporting-service": {
+      "type": "application",
+      "root": "apps/reporting-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/reporting-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/reporting-service/tsconfig.app.json"
+      }
+    },
+    "audit-service": {
+      "type": "application",
+      "root": "apps/audit-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/audit-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/audit-service/tsconfig.app.json"
+      }
+    },
+    "admin-service": {
+      "type": "application",
+      "root": "apps/admin-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin-service/tsconfig.app.json"
+      }
+    },
     "common": {
       "type": "library",
       "root": "libs/common",
@@ -222,6 +267,15 @@
       "sourceRoot": "libs/testing/src",
       "compilerOptions": {
         "tsConfigPath": "libs/testing/tsconfig.lib.json"
+      }
+    },
+    "resilience": {
+      "type": "library",
+      "root": "libs/resilience",
+      "entryFile": "index",
+      "sourceRoot": "libs/resilience/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/resilience/tsconfig.lib.json"
       }
     }
   }

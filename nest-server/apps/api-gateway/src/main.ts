@@ -108,6 +108,26 @@ async function bootstrap() {
       'OTA Updates & Firmware Management',
       'Firmware SHA-256 validation, staged campaign fleet rollout & automatic rollback management',
     )
+    .addTag(
+      'Notifications & Template Management',
+      'Multi-channel notification delivery (Email, SMS, Push, In-App, Webhook), templates & preferences',
+    )
+    .addTag(
+      'Business Intelligence & Analytics Dashboard',
+      'Executive dashboard metrics, time-series aggregation rollups & fleet analytics',
+    )
+    .addTag(
+      'Enterprise Reporting & Multi-Format Exporter',
+      'Enterprise reports generation & instant multi-format exporter (PDF, Excel, CSV, JSON)',
+    )
+    .addTag(
+      'Immutable Audit History & Compliance Trail',
+      'Append-only forensic audit logging & compliance query trail',
+    )
+    .addTag(
+      'Platform Governance & Administration',
+      'System settings, feature flag rollouts, HMAC API key management & outbound webhooks',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

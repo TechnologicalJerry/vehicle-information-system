@@ -22,6 +22,11 @@ import { DiagnosticsModule } from '../../diagnostics-service/src/diagnostics/dia
 import { DriverBehaviourModule } from '../../driver-behaviour-service/src/driver-behaviour/driver-behaviour.module';
 import { RemoteCommandModule } from '../../remote-command-service/src/commands/remote-command.module';
 import { OtaModule } from '../../ota-service/src/ota/ota.module';
+import { NotificationModule } from '../../notification-service/src/notifications/notification.module';
+import { AnalyticsModule } from '../../analytics-service/src/analytics/analytics.module';
+import { ReportModule } from '../../reporting-service/src/reports/report.module';
+import { AuditModule } from '../../audit-service/src/audit/audit.module';
+import { AdminModule } from '../../admin-service/src/admin/admin.module';
 import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 @Module({
@@ -47,6 +52,11 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
     DriverBehaviourModule,
     RemoteCommandModule,
     OtaModule,
+    NotificationModule,
+    AnalyticsModule,
+    ReportModule,
+    AuditModule,
+    AdminModule,
   ],
   providers: [
     {

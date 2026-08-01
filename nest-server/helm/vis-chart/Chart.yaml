@@ -1,0 +1,9 @@
+apiVersion: v2
+name: vis-chart
+description: Helm chart for Vehicle Information System (VIS) Production Microservices
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+maintainers:
+  - name: VIS Platform Team
+    email: platform-team@enterprise.com

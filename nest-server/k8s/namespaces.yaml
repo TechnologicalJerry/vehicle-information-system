@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vis-production
+  labels:
+    environment: production
+    app.kubernetes.io/name: vehicle-information-system

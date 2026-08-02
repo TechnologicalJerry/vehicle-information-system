@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vis-configmap
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  GLOBAL_PREFIX: "api"
+  API_VERSION: "v1"
+  APP_NAME: "Vehicle Information System"
+  LOG_LEVEL: "info"

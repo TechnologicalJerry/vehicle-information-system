@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: vis-api-gateway-pdb
+  namespace: vis-production
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: vis-api-gateway

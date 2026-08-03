@@ -1,0 +1,1019 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  LOCKED
+}
+
+enum RoleEnum {
+  SUPER_ADMIN
+  ADMIN
+  FLEET_MANAGER
+  OPERATOR
+  DRIVER
+  READ_ONLY_USER
+}
+
+enum PermissionEnum {
+  USER_MANAGEMENT
+  FLEET_MANAGEMENT
+  VEHICLE_MANAGEMENT
+  TELEMETRY
+  TRIPS
+  LOCATION_READ
+  LOCATION_MANAGE
+  TRIP_READ
+  TRIP_MANAGE
+  GEOFENCE_MANAGE
+  DIAGNOSTICS_READ
+  DIAGNOSTICS_MANAGE
+  MAINTENANCE_READ
+  MAINTENANCE_MANAGE
+  DRIVER_BEHAVIOUR_READ
+  DRIVER_BEHAVIOUR_MANAGE
+  FLEET_ANALYTICS
+  COMMAND_EXECUTE
+  COMMAND_READ
+  OTA_READ
+  OTA_MANAGE
+  FIRMWARE_MANAGE
+  FLEET_COMMAND
+  FLEET_OTA
+  NOTIFICATION_READ
+  NOTIFICATION_MANAGE
+  ANALYTICS_READ
+  ANALYTICS_EXPORT
+  DASHBOARD_VIEW
+  REPORTS_READ
+  REPORTS_EXPORT
+  REPORTS_MANAGE
+  AUDIT_READ
+  AUDIT_MANAGE
+  ADMIN_READ
+  ADMIN_MANAGE
+  FEATURE_FLAGS_MANAGE
+  SETTINGS_MANAGE
+  API_KEYS_MANAGE
+  WEBHOOKS_MANAGE
+  DIAGNOSTICS
+  REPORTS
+  OTA
+  NOTIFICATIONS
+  ANALYTICS
+  AUDIT
+  ADMIN
+}
+
+enum FleetStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DECOMMISSIONED
+}
+
+enum VehicleStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  RETIRED
+  SOLD
+  SUSPENDED
+  DECOMMISSIONED
+}
+
+enum DriverAssignmentStatus {
+  ACTIVE
+  RELEASED
+  TRANSFERRED
+}
+
+enum PairingStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  REVOKED
+}
+
+enum TripStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DtcCategory {
+  ENGINE
+  TRANSMISSION
+  ELECTRICAL
+  BATTERY
+  COOLING
+  FUEL
+  BRAKE
+  SUSPENSION
+  STEERING
+  ABS
+  AIRBAG
+  EMISSION
+  TYRE
+  CHARGING
+  UNKNOWN
+}
+
+enum DtcSeverity {
+  INFO
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum DtcStatus {
+  ACTIVE
+  RESOLVED
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RankingPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum CommandType {
+  LOCK_DOORS
+  UNLOCK_DOORS
+  START_ENGINE
+  STOP_ENGINE
+  FLASH_LIGHTS
+  HONK_HORN
+  ENABLE_IMMOBILIZER
+  DISABLE_IMMOBILIZER
+  OPEN_TRUNK
+  CLOSE_TRUNK
+  ACTIVATE_HAZARD_LIGHTS
+  DEACTIVATE_HAZARD_LIGHTS
+  START_CLIMATE_CONTROL
+  STOP_CLIMATE_CONTROL
+  SET_CABIN_TEMPERATURE
+  ENABLE_DEFROST
+  START_CHARGING
+  STOP_CHARGING
+  SET_CHARGE_LIMIT
+  RESET_SERVICE_REMINDER
+  CUSTOM_OEM_COMMAND
+}
+
+enum CommandStatus {
+  PENDING
+  QUEUED
+  SENT
+  ACKNOWLEDGED
+  EXECUTING
+  COMPLETED
+  FAILED
+  TIMED_OUT
+  CANCELLED
+}
+
+enum CommandPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RolloutType {
+  IMMEDIATE
+  SCHEDULED
+  PERCENTAGE
+  FLEET
+  REGION
+  MANUAL_APPROVAL
+}
+
+enum OtaCampaignStatus {
+  DRAFT
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum OtaStatus {
+  PENDING
+  DOWNLOADING
+  INSTALLING
+  REBOOTING
+  VERIFYING
+  COMPLETED
+  FAILED
+  CANCELLED
+  ROLLED_BACK
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+  WEBHOOK
+}
+
+enum NotificationCategory {
+  AUTHENTICATION
+  FLEET
+  VEHICLE
+  TRIP
+  DIAGNOSTICS
+  MAINTENANCE
+  REMOTE_COMMAND
+  OTA
+  GEOFENCE
+  DRIVER_BEHAVIOUR
+  SECURITY
+  ANALYTICS
+  SYSTEM
+}
+
+enum NotificationStatus {
+  PENDING
+  QUEUED
+  SENDING
+  DELIVERED
+  READ
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ReportType {
+  FLEET
+  VEHICLE
+  TRIP
+  DRIVER
+  MAINTENANCE
+  DIAGNOSTICS
+  FUEL
+  BATTERY
+  HEALTH
+  SAFETY
+  NOTIFICATION
+  OTA
+  SYSTEM_USAGE
+  AUDIT
+  CUSTOM
+}
+
+enum ExportFormat {
+  PDF
+  EXCEL
+  CSV
+  JSON
+}
+
+enum ReportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum FuelType {
+  GASOLINE
+  DIESEL
+  ELECTRIC
+  HYBRID
+  PLUG_IN_HYBRID
+  HYDROGEN
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+  SINGLE_SPEED_EV
+  CVT
+}
+
+enum VehicleType {
+  SEDAN
+  SUV
+  TRUCK
+  VAN
+  BUS
+  COUPE
+  HATCHBACK
+}
+
+model User {
+  id                  String       @id @default(uuid())
+  firstName           String       @map("first_name")
+  lastName            String       @map("last_name")
+  username            String       @unique
+  email               String       @unique
+  phoneNumber         String?      @map("phone_number")
+  passwordHash        String       @map("password_hash")
+  profileImage        String?      @map("profile_image")
+  status              UserStatus   @default(ACTIVE)
+  emailVerified       Boolean      @default(false) @map("email_verified")
+  lastLogin           DateTime?    @map("last_login")
+  failedLoginAttempts Int          @default(0) @map("failed_login_attempts")
+  accountLockedUntil  DateTime?    @map("account_locked_until")
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+  deletedAt           DateTime?    @map("deleted_at")
+
+  userRoles           UserRole[]
+  sessions            Session[]
+  refreshTokens       RefreshToken[]
+  passwordHistories   PasswordHistory[]
+  managedFleets       Fleet[]                    @relation("FleetManager")
+  driverAssignments   DriverAssignment[]
+  trips               Trip[]
+  driverScores        DriverScore[]
+  driverRankings      DriverRanking[]
+  remoteCommands      RemoteCommand[]
+  otaCampaigns        OtaCampaign[]
+  notifications       Notification[]
+  preference          NotificationPreference?
+  reports             Report[]
+  reportSchedules     ReportSchedule[]
+  auditLogs           AuditLog[]
+  apiKeys             ApiKey[]
+
+  @@map("users")
+  @@index([email])
+  @@index([username])
+}
+
+model Role {
+  id              String           @id @default(uuid())
+  name            RoleEnum         @unique
+  description     String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  name            PermissionEnum   @unique
+  description     String?
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @map("user_id")
+  roleId String @map("role_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model Session {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  refreshTokenHash String    @map("refresh_token_hash")
+  ipAddress        String?   @map("ip_address")
+  device           String?
+  browser          String?
+  operatingSystem  String?   @map("operating_system")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+  @@index([userId])
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  revoked   Boolean   @default(false)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+  @@index([userId])
+}
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  email     String
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("verification_tokens")
+  @@index([email])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  email     String
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("password_reset_tokens")
+  @@index([email])
+}
+
+model PasswordHistory {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_histories")
+  @@index([userId])
+}
+
+model Fleet {
+  id             String      @id @default(uuid())
+  organizationId String      @map("organization_id")
+  fleetCode      String      @unique @map("fleet_code")
+  fleetName      String      @map("fleet_name")
+  description    String?
+  status         FleetStatus @default(ACTIVE)
+  managerId      String?     @map("manager_id")
+  totalVehicles  Int         @default(0) @map("total_vehicles")
+  metadata       Json?       @default("{}")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+  deletedAt      DateTime?   @map("deleted_at")
+
+  manager          User?                      @relation("FleetManager", fields: [managerId], references: [id])
+  vehicles         Vehicle[]
+  ownershipHistory VehicleOwnershipHistory[]
+  trips            Trip[]
+  dtcs             Dtc[]
+  driverRankings   DriverRanking[]
+  notifications    Notification[]
+
+  @@map("fleets")
+  @@index([organizationId])
+  @@index([fleetCode])
+}
+
+model Vehicle {
+  id                 String        @id @default(uuid())
+  fleetId            String?       @map("fleet_id")
+  vin                String        @unique
+  registrationNumber String        @unique @map("registration_number")
+  chassisNumber      String?       @map("chassis_number")
+  engineNumber       String?       @map("engine_number")
+  manufacturer       String
+  model              String
+  variant            String?
+  modelYear          Int           @map("model_year")
+  colour             String?
+  fuelType           FuelType      @default(ELECTRIC) @map("fuel_type")
+  transmission       Transmission  @default(SINGLE_SPEED_EV)
+  vehicleType        VehicleType   @default(SEDAN) @map("vehicle_type")
+  engineCapacity     Float?        @map("engine_capacity")
+  batteryCapacity    Float?        @map("battery_capacity")
+  odometer           Float         @default(0.0)
+  status             VehicleStatus @default(PENDING)
+  softwareVersion    String?       @map("software_version")
+  firmwareVersion    String?       @map("firmware_version")
+  pairingStatus      PairingStatus @default(PENDING) @map("pairing_status")
+  manufacturingDate  DateTime?     @map("manufacturing_date")
+  purchaseDate       DateTime?     @map("purchase_date")
+  warrantyExpiry     DateTime?     @map("warranty_expiry")
+  insuranceExpiry    DateTime?     @map("insurance_expiry")
+  registrationExpiry DateTime?     @map("registration_expiry")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+  deletedAt          DateTime?     @map("deleted_at")
+
+  fleet                      Fleet?                      @relation(fields: [fleetId], references: [id])
+  driverAssignments          DriverAssignment[]
+  ownershipHistory           VehicleOwnershipHistory[]
+  pairings                   VehiclePairing[]
+  statusHistory              VehicleStatusHistory[]
+  trips                      Trip[]
+  dtcs                       Dtc[]
+  maintenanceRecommendations MaintenanceRecommendation[]
+  remoteCommands             RemoteCommand[]
+  otaDeployments             OtaDeployment[]
+  notifications              Notification[]
+
+  @@map("vehicles")
+  @@index([vin])
+  @@index([registrationNumber])
+  @@index([fleetId])
+  @@index([status])
+}
+
+model DriverAssignment {
+  id         String                 @id @default(uuid())
+  vehicleId  String                 @map("vehicle_id")
+  driverId   String                 @map("driver_id")
+  assignedAt DateTime               @default(now()) @map("assigned_at")
+  releasedAt DateTime?              @map("released_at")
+  status     DriverAssignmentStatus @default(ACTIVE)
+
+  vehicle    Vehicle                @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver     User                   @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@map("driver_assignments")
+  @@index([vehicleId])
+  @@index([driverId])
+}
+
+model VehicleOwnershipHistory {
+  id              String   @id @default(uuid())
+  vehicleId       String   @map("vehicle_id")
+  previousFleetId String?  @map("previous_fleet_id")
+  newFleetId      String   @map("new_fleet_id")
+  reason          String?
+  transferredAt   DateTime @default(now()) @map("transferred_at")
+
+  vehicle       Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  newFleet      Fleet     @relation(fields: [newFleetId], references: [id], onDelete: Cascade)
+
+  @@map("vehicle_ownership_histories")
+  @@index([vehicleId])
+}
+
+model VehiclePairing {
+  id          String        @id @default(uuid())
+  vehicleId   String        @map("vehicle_id")
+  pairingCode String        @map("pairing_code")
+  status      PairingStatus @default(PENDING)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  expiresAt   DateTime      @map("expires_at")
+  pairedAt    DateTime?     @map("paired_at")
+  revokedAt   DateTime?     @map("revoked_at")
+
+  vehicle     Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("vehicle_pairings")
+  @@index([vehicleId])
+}
+
+model VehicleStatusHistory {
+  id             String        @id @default(uuid())
+  vehicleId      String        @map("vehicle_id")
+  previousStatus VehicleStatus @map("previous_status")
+  newStatus      VehicleStatus @map("new_status")
+  reason         String?
+  changedAt      DateTime      @default(now()) @map("changed_at")
+
+  vehicle        Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("vehicle_status_histories")
+  @@index([vehicleId])
+}
+
+model Trip {
+  id              String     @id @default(uuid())
+  vehicleId       String     @map("vehicle_id")
+  fleetId         String?    @map("fleet_id")
+  driverId        String?    @map("driver_id")
+  tripNumber      String     @unique @map("trip_number")
+  startTime       DateTime   @map("start_time")
+  endTime         DateTime?  @map("end_time")
+  startLatitude   Float      @map("start_latitude")
+  startLongitude  Float      @map("start_longitude")
+  endLatitude     Float?     @map("end_latitude")
+  endLongitude    Float?     @map("end_longitude")
+  distance        Float      @default(0.0)
+  duration        Int        @default(0)
+  averageSpeed    Float      @default(0.0) @map("average_speed")
+  maximumSpeed    Float      @default(0.0) @map("maximum_speed")
+  idleDuration    Int        @default(0) @map("idle_duration")
+  fuelConsumed    Float      @default(0.0) @map("fuel_consumed")
+  batteryConsumed Float      @default(0.0) @map("battery_consumed")
+  tripStatus      TripStatus @default(IN_PROGRESS) @map("trip_status")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  vehicle Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  fleet   Fleet?   @relation(fields: [fleetId], references: [id])
+  driver  User?    @relation(fields: [driverId], references: [id])
+
+  @@map("trips")
+  @@index([vehicleId])
+  @@index([fleetId])
+  @@index([driverId])
+  @@index([tripStatus])
+}
+
+model Dtc {
+  id              String      @id @default(uuid())
+  vehicleId       String      @map("vehicle_id")
+  fleetId         String?     @map("fleet_id")
+  code            String      @map("code")
+  category        DtcCategory @default(UNKNOWN)
+  severity        DtcSeverity @default(MEDIUM)
+  title           String
+  description     String?
+  status          DtcStatus   @default(ACTIVE)
+  firstDetectedAt DateTime    @default(now()) @map("first_detected_at")
+  lastDetectedAt  DateTime    @default(now()) @map("last_detected_at")
+  occurrenceCount Int         @default(1) @map("occurrence_count")
+  resolvedAt      DateTime?   @map("resolved_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  fleet   Fleet?   @relation(fields: [fleetId], references: [id])
+
+  @@map("dtcs")
+  @@index([vehicleId])
+  @@index([fleetId])
+  @@index([code])
+  @@index([status])
+}
+
+model MaintenanceRecommendation {
+  id             String              @id @default(uuid())
+  vehicleId      String              @map("vehicle_id")
+  recommendation String
+  priority       MaintenancePriority @default(MEDIUM)
+  dueDate        DateTime            @map("due_date")
+  category       String
+  generatedAt    DateTime            @default(now()) @map("generated_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_recommendations")
+  @@index([vehicleId])
+  @@index([priority])
+}
+
+model DriverScore {
+  id                  String   @id @default(uuid())
+  driverId            String   @unique @map("driver_id")
+  overallScore        Float    @map("overall_score")
+  accelerationScore   Float    @map("acceleration_score")
+  brakingScore        Float    @map("braking_score")
+  corneringScore      Float    @map("cornering_score")
+  speedingScore       Float    @map("speeding_score")
+  idlingScore         Float    @map("idling_score")
+  safetyEventsCount   Int      @default(0) @map("safety_events_count")
+  totalTripsEvaluated Int      @default(0) @map("total_trips_evaluated")
+  evaluatedAt         DateTime @default(now()) @map("evaluated_at")
+
+  driver User @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@map("driver_scores")
+  @@index([driverId])
+}
+
+model DriverRanking {
+  id        String        @id @default(uuid())
+  driverId  String        @map("driver_id")
+  fleetId   String        @map("fleet_id")
+  rank      Int
+  period    RankingPeriod @default(MONTHLY)
+  score     Float
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  driver User  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  fleet  Fleet @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+
+  @@map("driver_rankings")
+  @@index([driverId])
+  @@index([fleetId])
+  @@index([period])
+}
+
+model RemoteCommand {
+  id             String          @id @default(uuid())
+  vehicleId      String          @map("vehicle_id")
+  commandType    CommandType     @map("command_type")
+  payload        Json?           @default("{}")
+  requestedBy    String?         @map("requested_by")
+  requestSource  String          @default("API") @map("request_source")
+  status         CommandStatus   @default(PENDING)
+  priority       CommandPriority @default(MEDIUM)
+  retryCount     Int             @default(0) @map("retry_count")
+  correlationId  String          @unique @map("correlation_id")
+  sentAt         DateTime?       @map("sent_at")
+  acknowledgedAt DateTime?       @map("acknowledged_at")
+  completedAt    DateTime?       @map("completed_at")
+  failedAt       DateTime?       @map("failed_at")
+  timeoutAt      DateTime?       @map("timeout_at")
+  errorMessage   String?         @map("error_message")
+  createdAt      DateTime        @default(now()) @map("created_at")
+
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  requester User?   @relation(fields: [requestedBy], references: [id])
+
+  @@map("remote_commands")
+  @@index([vehicleId])
+  @@index([status])
+  @@index([correlationId])
+}
+
+model Firmware {
+  id              String   @id @default(uuid())
+  version         String   @unique
+  releaseName     String   @map("release_name")
+  description     String?
+  checksum        String   @map("checksum") // SHA-256
+  size            BigInt   @default(0)
+  releaseNotes    String?  @map("release_notes")
+  releaseDate     DateTime @map("release_date")
+  supportedModels String[] @map("supported_models")
+  minimumVersion  String?  @map("minimum_version")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  otaCampaigns OtaCampaign[]
+
+  @@map("firmwares")
+  @@index([version])
+}
+
+model OtaCampaign {
+  id                String            @id @default(uuid())
+  firmwareId        String            @map("firmware_id")
+  campaignName      String            @map("campaign_name")
+  rolloutType       RolloutType       @default(IMMEDIATE) @map("rollout_type")
+  scheduledAt       DateTime?         @map("scheduled_at")
+  status            OtaCampaignStatus @default(DRAFT)
+  totalVehicles     Int               @default(0) @map("total_vehicles")
+  successfulUpdates Int               @default(0) @map("successful_updates")
+  failedUpdates     Int               @default(0) @map("failed_updates")
+  createdBy         String?           @map("created_by")
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  firmware    Firmware        @relation(fields: [firmwareId], references: [id], onDelete: Cascade)
+  creator     User?           @relation(fields: [createdBy], references: [id])
+  deployments OtaDeployment[]
+
+  @@map("ota_campaigns")
+  @@index([firmwareId])
+  @@index([status])
+}
+
+model OtaDeployment {
+  id              String      @id @default(uuid())
+  campaignId      String      @map("campaign_id")
+  vehicleId       String      @map("vehicle_id")
+  firmwareVersion String      @map("firmware_version")
+  deploymentStatus OtaStatus   @default(PENDING) @map("deployment_status")
+  startedAt       DateTime?   @map("started_at")
+  completedAt     DateTime?   @map("completed_at")
+  failureReason   String?     @map("failure_reason")
+
+  campaign OtaCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  vehicle  Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@map("ota_deployments")
+  @@index([campaignId])
+  @@index([vehicleId])
+  @@index([deploymentStatus])
+}
+
+model Notification {
+  id            String               @id @default(uuid())
+  userId        String?              @map("user_id")
+  vehicleId     String?              @map("vehicle_id")
+  fleetId       String?              @map("fleet_id")
+  channel       NotificationChannel  @default(IN_APP)
+  category      NotificationCategory @default(SYSTEM)
+  title         String
+  message       String
+  payload       Json?                @default("{}")
+  priority      NotificationPriority @default(MEDIUM)
+  status        NotificationStatus   @default(PENDING)
+  scheduledAt   DateTime?            @map("scheduled_at")
+  deliveredAt   DateTime?            @map("delivered_at")
+  readAt        DateTime?            @map("read_at")
+  retryCount    Int                  @default(0) @map("retry_count")
+  failureReason String?              @map("failure_reason")
+  metadata      Json?                @default("{}")
+  createdAt     DateTime             @default(now()) @map("created_at")
+
+  user    User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
+  fleet   Fleet?   @relation(fields: [fleetId], references: [id])
+
+  @@map("notifications")
+  @@index([userId])
+  @@index([vehicleId])
+  @@index([fleetId])
+  @@index([status])
+  @@index([channel])
+}
+
+model NotificationTemplate {
+  id        String              @id @default(uuid())
+  name      String              @unique
+  channel   NotificationChannel @default(EMAIL)
+  subject   String
+  body      String
+  variables String[]            @default([])
+  version   Int                 @default(1)
+  active    Boolean             @default(true)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  @@map("notification_templates")
+  @@index([name])
+}
+
+model NotificationPreference {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  channels        Json     @default("[\"EMAIL\",\"IN_APP\"]")
+  categories      Json     @default("[\"SECURITY\",\"DIAGNOSTICS\",\"GEOFENCE\"]")
+  quietHoursStart String?  @map("quiet_hours_start")
+  quietHoursEnd   String?  @map("quiet_hours_end")
+  language        String   @default("en")
+  timezone        String   @default("UTC")
+  frequency       String   @default("IMMEDIATE")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+  @@index([userId])
+}
+
+model Report {
+  id           String       @id @default(uuid())
+  reportName   String       @map("report_name")
+  reportType   ReportType   @default(FLEET) @map("report_type")
+  generatedBy  String?      @map("generated_by")
+  schedule     String?
+  exportFormat ExportFormat @default(CSV) @map("export_format")
+  status       ReportStatus @default(PENDING)
+  filters      Json?        @default("{}")
+  fileLocation String?      @map("file_location")
+  generatedAt  DateTime?    @map("generated_at")
+  expiresAt    DateTime?    @map("expires_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  generator User? @relation(fields: [generatedBy], references: [id])
+
+  @@map("reports")
+  @@index([reportType])
+  @@index([status])
+  @@index([generatedBy])
+}
+
+model ReportSchedule {
+  id              String       @id @default(uuid())
+  reportName      String       @map("report_name")
+  reportType      ReportType   @default(FLEET) @map("report_type")
+  exportFormat    ExportFormat @default(CSV) @map("export_format")
+  cronExpression  String       @map("cron_expression")
+  recipientEmails String[]     @default([]) @map("recipient_emails")
+  createdBy       String?      @map("created_by")
+  active          Boolean      @default(true)
+  createdAt       DateTime     @default(now()) @map("created_at")
+
+  creator User? @relation(fields: [createdBy], references: [id])
+
+  @@map("report_schedules")
+  @@index([reportType])
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  userId        String?  @map("user_id")
+  service       String
+  entityType    String   @map("entity_type")
+  entityId      String?  @map("entity_id")
+  action        String
+  oldValue      Json?    @map("old_value")
+  newValue      Json?    @map("new_value")
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  correlationId String?  @map("correlation_id")
+  metadata      Json?    @default("{}")
+  timestamp     DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([service])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([timestamp])
+}
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  category    String   @default("GENERAL")
+  description String?
+  isEncrypted Boolean  @default(false) @map("is_encrypted")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
+  @@index([key])
+  @@index([category])
+}
+
+model FeatureFlag {
+  id                String   @id @default(uuid())
+  key               String   @unique
+  enabled           Boolean  @default(false)
+  rolloutPercentage Int      @default(100) @map("rollout_percentage")
+  environment       String   @default("production")
+  description       String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+  @@index([key])
+}
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  keyHash    String    @unique @map("key_hash")
+  name       String
+  ownerId    String?   @map("owner_id")
+  scopes     String[]  @default([])
+  revoked    Boolean   @default(false)
+  expiresAt  DateTime? @map("expires_at")
+  lastUsedAt DateTime? @map("last_used_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+  @@index([keyHash])
+  @@index([ownerId])
+}
+
+model Webhook {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  secret    String
+  events    String[] @default([])
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("webhooks")
+  @@index([name])
+}
+
+model SystemHealthCheck {
+  id        String   @id @default(uuid())
+  status    String   @default("UP")
+  checkedAt DateTime @default(now())
+
+  @@map("system_health_checks")
+}

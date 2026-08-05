@@ -1,0 +1,17 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'service']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: 'slack-notifications'
+
+receivers:
+  - name: 'slack-notifications'
+    slack_configs:
+      - channel: '#vis-alerts-prod'
+        send_resolved: true
+        # Start Alertmanager with --config.expand-env so this value is resolved.
+        api_url: '${SLACK_WEBHOOK_URL}'
